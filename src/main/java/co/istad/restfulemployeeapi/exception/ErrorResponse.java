@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
-public record ErrorResponse(
+public record ErrorResponse<T>(
 
         Boolean status,
 
@@ -14,7 +14,7 @@ public record ErrorResponse(
 
         String message,
 
-        List<FieldErrorResponse> errors,
+        T errors,
 
         LocalDateTime timestamp
 

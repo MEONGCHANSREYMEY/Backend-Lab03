@@ -22,7 +22,6 @@ public record CreateEmployeeRequest(
 
 
         @DateTimeFormat(pattern = "yyyy-MM-dd")
-//        @NotBlank(message = "Hire date is required")
         LocalDate hireDate
 
 ) {
