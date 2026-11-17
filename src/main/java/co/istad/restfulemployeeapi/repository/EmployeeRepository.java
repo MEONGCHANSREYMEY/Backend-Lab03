@@ -1,46 +1,40 @@
 package co.istad.restfulemployeeapi.repository;
 
 import co.istad.restfulemployeeapi.domain.Employee;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import org.springframework.cglib.core.Local;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-@Getter
-public class EmployeeRepository {
+public interface EmployeeRepository extends JpaRepository<Employee, String> {
 
-    private final List<Employee> employees;
+    boolean existsByEmail(String email);
 
-    public EmployeeRepository() {
-        employees = new ArrayList<>();
+    List<Employee> findBySalaryGreaterThan(BigDecimal salary);
 
-        Employee emp1 = new Employee();
-        emp1.setId(1);
-        emp1.setName("Tony Stark");
-        emp1.setEmail("ironman@gmail.com");
-        emp1.setSalary(BigDecimal.valueOf(1500.00));
-        emp1.setHireDate(
-                LocalDate.of(2025, 10, 30)
-        );
-        emp1.setIsActive(true);
+    List<Employee> findByNameStartsWithIgnoreCase(String name);
 
-        Employee emp2 = new Employee();
-        emp2.setId(2);
-        emp2.setName("Bruce Banner");
-        emp2.setEmail("hulk@gmail.com");
-        emp2.setSalary(BigDecimal.valueOf(800.00));
-        emp2.setHireDate(
-                LocalDate.of(2026, 10, 30)
-        );
-        emp2.setIsActive(true);
+    // Native SQL
+    @Query(value = "select * from employees where name = :name", nativeQuery = true)
+    Optional<Employee> getByName(String name);
 
-        employees.add(emp1);
-        employees.add(emp2);
-    }
+    // JPQL
+    @Query(value = "select e from Employee  e where e.hireDate = :hireDate")
+    Optional<Employee> getByHireDate(LocalDate hireDate);
 
+    @Modifying
+    @Query(value = "update Employee e set e.isActive = :status where e.id = :id")
+    void updateEmployeeStatus(String id, Boolean status);
+
+    List<Employee> id(String id);
 }

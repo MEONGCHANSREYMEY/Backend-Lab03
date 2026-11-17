@@ -23,8 +23,14 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public EmployeeResponse getEmployeeById(@PathVariable Integer id) {
+    public EmployeeResponse getEmployeeById(@PathVariable String id) {
         return service.getEmployeeById(id);
+    }
+
+    @PutMapping("/{id}")
+    public void updateEmployeeStatus(@PathVariable String id,
+                                     @RequestParam Boolean isActive) {
+        service.updateEmployeeStatus(id, isActive);
     }
 
     @PostMapping

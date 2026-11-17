@@ -1,5 +1,16 @@
 spring:
   application:
     name: employee-api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5444/emp_db
+    username: emp_user
+    password: emp_pass
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
 server:
   port: 8888

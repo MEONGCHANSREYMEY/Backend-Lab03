@@ -10,12 +10,14 @@ public interface EmployeeService {
 
     // CRUD: Create, Read, Update, Delete
     List<EmployeeResponse> getAll();
-    EmployeeResponse getEmployeeById(Integer id);
+    EmployeeResponse getEmployeeById(String id);
 
     EmployeeResponse createEmployee(CreateEmployeeRequest employeeRequest);
 
-    EmployeeResponse updateEmployeeById(Integer id, UpdateEmployeeRequest updateEmployeeRequest);
+    EmployeeResponse updateEmployeeById(String id, UpdateEmployeeRequest updateEmployeeRequest);
 
-    void deleteEmployeeById(Integer id);
+    void deleteEmployeeById(String id);
+
+    void updateEmployeeStatus(String id, Boolean status);
 
 }

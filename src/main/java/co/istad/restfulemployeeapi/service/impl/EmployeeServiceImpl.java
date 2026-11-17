@@ -7,6 +7,8 @@ import co.istad.restfulemployeeapi.dto.UpdateEmployeeRequest;
 import co.istad.restfulemployeeapi.mapper.EmployeeMapper;
 import co.istad.restfulemployeeapi.repository.EmployeeRepository;
 import co.istad.restfulemployeeapi.service.EmployeeService;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,70 +18,83 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+//@Transactional(readOnly = true)
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private final EmployeeRepository repository;
+    private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
 
-    private static int nextId = 3;
 
     @Override
     public List<EmployeeResponse> getAll() {
-        return repository.getEmployees()
-                .stream()
-                .map(employeeMapper::toResponse)
-                // emp -> mapper.toResponse(emp)
-                .toList();
+        return List.of();
     }
 
     @Override
-    public EmployeeResponse getEmployeeById(Integer id) {
-        return repository.getEmployees()
-                .stream()
-                .filter(emp -> emp.getId().equals(id))
-                .findFirst()
-                .map(employeeMapper::toResponse)
-                .orElseThrow(
-                        () -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Employee with id: %d not found".formatted(id)
-                        )
-                );
+    public EmployeeResponse getEmployeeById(String id) {
+
+        Employee emp = getById(id);
+
+        return employeeMapper.toResponse(emp);
+
     }
 
+    @Transactional
     @Override
     public EmployeeResponse createEmployee(CreateEmployeeRequest employeeRequest) {
 
-        if (checkIfEmailExists(employeeRequest.email())) {
+        if (employeeRepository.existsByEmail(employeeRequest.email())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Email already exists"
+                    "Email is already existed"
             );
         }
 
-        Employee employee = employeeMapper.fromCreateEmployeeRequest(employeeRequest);
-        employee.setId(nextId++);
-        employee.setIsActive(Boolean.TRUE);
+        Employee emp = employeeMapper.fromCreateEmployeeRequest(employeeRequest);
+        emp.setIsActive(Boolean.TRUE);
 
-        repository.getEmployees().add(employee);
+        employeeRepository.save(emp);
 
-        return employeeMapper.toResponse(employee);
+        return employeeMapper.toResponse(emp);
+
     }
 
     @Override
-    public EmployeeResponse updateEmployeeById(Integer id, UpdateEmployeeRequest updateEmployeeRequest) {
+    public EmployeeResponse updateEmployeeById(String id, UpdateEmployeeRequest updateEmployeeRequest) {
         return null;
     }
 
     @Override
-    public void deleteEmployeeById(Integer id) {
+    public void deleteEmployeeById(String id) {
 
     }
 
-    private boolean checkIfEmailExists(String email) {
-        return repository.getEmployees()
-                .stream()
-                .anyMatch(emp -> emp.getEmail().equals(email));
+    @Transactional
+    @Override
+    public void updateEmployeeStatus(String id, Boolean status) {
+
+        checkIdExists(id);
+
+        employeeRepository.updateEmployeeStatus(id, status);
+    }
+
+    private void checkIdExists(String id) {
+        if(!employeeRepository.existsById(id)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Employee has not been found"
+            );
+        }
+    }
+
+    private Employee getById(String id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Employee has not been found"
+                        )
+                );
     }
 
 }
