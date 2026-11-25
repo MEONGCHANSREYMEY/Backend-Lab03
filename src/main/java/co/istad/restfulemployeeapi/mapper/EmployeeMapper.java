@@ -6,7 +6,8 @@ import co.istad.restfulemployeeapi.dto.EmployeeResponse;
 import co.istad.restfulemployeeapi.dto.UpdateEmployeeRequest;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+// ADDED: uses = DepartmentMapper.class -> maps employee.department into DepartmentResponce
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = DepartmentMapper.class)
 public interface EmployeeMapper {
 
     // Map from Domain to DTO

@@ -22,7 +22,10 @@ public record CreateEmployeeRequest(
 
 
         @DateTimeFormat(pattern = "yyyy-MM-dd")
-        LocalDate hireDate
+        LocalDate hireDate,
+
+        // ADDED: optional - the department the new employee joins
+        String departmentId
 
 ) {
 }

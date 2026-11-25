@@ -5,6 +5,7 @@ import co.istad.restfulemployeeapi.dto.EmployeeResponse;
 import co.istad.restfulemployeeapi.dto.UpdateEmployeeRequest;
 
 import java.util.List;
+import co.istad.restfulemployeeapi.dto.TransferEmployeeRequest;
 
 public interface EmployeeService {
 
@@ -19,5 +20,11 @@ public interface EmployeeService {
     void deleteEmployeeById(String id);
 
     void updateEmployeeStatus(String id, Boolean status);
+
+    // ADDED: 1. Advanced Employee Search
+    List<EmployeeResponse> searchEmployees(String keyword);
+
+    // ADDED: 4. Employee Transfer
+    EmployeeResponse transferEmployee(String employeeId, TransferEmployeeRequest request);
 
 }

@@ -35,4 +35,9 @@ public class Employee {
 
     private Boolean isActive;
 
+    // ADDED: many employees -> one department (creates employees.department_id)
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
+
 }

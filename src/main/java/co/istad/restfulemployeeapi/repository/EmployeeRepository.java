@@ -15,6 +15,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface EmployeeRepository extends JpaRepository<Employee, String> {
 
@@ -37,4 +39,28 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
     void updateEmployeeStatus(String id, Boolean status);
 
     List<Employee> id(String id);
+
+    // ===================== ADDED for the assignment =====================
+
+    // 1. Advanced search: case-insensitive partial match on name OR email
+    @Query("""
+            select e from Employee e
+            left join fetch e.department
+            where lower(e.name)  like lower(concat('%', :keyword, '%'))
+               or lower(e.email) like lower(concat('%', :keyword, '%'))
+            order by e.name asc
+            """)
+    List<Employee> searchByNameOrEmail(String keyword);
+
+    // 3. Department employee listing with pagination + sorting
+    Page<Employee> findByDepartmentId(String departmentId, Pageable pageable);
+
+    // 5. Department statistics
+    long countByDepartmentId(String departmentId);
+
+    long countByDepartmentIdAndIsActiveTrue(String departmentId);
+
+    @Query("select avg(e.salary) from Employee e where e.department.id = :departmentId")
+    Double averageSalaryByDepartmentId(String departmentId);
+
 }

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import co.istad.restfulemployeeapi.dto.TransferEmployeeRequest;
 
 @RestController
 @RequestMapping("/api/v1/employees")
@@ -20,6 +21,21 @@ public class EmployeeController {
     @GetMapping
     public List<EmployeeResponse> getAllEmployees() {
         return service.getAll();
+    }
+
+    // ADDED: 1. Advanced Employee Search
+    // GET /api/v1/employees/search?keyword=john
+    @GetMapping("/search")
+    public List<EmployeeResponse> searchEmployees(@RequestParam String keyword) {
+        return service.searchEmployees(keyword);
+    }
+
+    // ADDED: 4. Employee Transfer
+    // PATCH /api/v1/employees/{employeeId}/transfer   body: { "departmentId": "..." }
+    @PatchMapping("/{employeeId}/transfer")
+    public EmployeeResponse transferEmployee(@PathVariable String employeeId,
+                                             @Valid @RequestBody TransferEmployeeRequest request) {
+        return service.transferEmployee(employeeId, request);
     }
 
     @GetMapping("/{id}")
@@ -36,7 +52,7 @@ public class EmployeeController {
     @PostMapping
     public EmployeeResponse createEmployee(
             @Valid @RequestBody CreateEmployeeRequest createRequest
-            ) {
+    ) {
         return service.createEmployee(createRequest);
     }
 

@@ -2,20 +2,24 @@ package co.istad.restfulemployeeapi.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import co.istad.restfulemployeeapi.dto.department.DepartmentResponce;
 
 public record EmployeeResponse(
 
-    String id,
+        String id,
 
-    String name,
+        String name,
 
-    String email,
+        String email,
 
-    BigDecimal salary,
+        BigDecimal salary,
 
-    LocalDate hireDate,
+        LocalDate hireDate,
 
-    Boolean isActive
+        Boolean isActive,
+
+        // ADDED: department info (null if the employee has no department yet)
+        DepartmentResponce department
 
 ) {
 }
